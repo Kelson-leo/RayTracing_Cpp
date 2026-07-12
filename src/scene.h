@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include "bvh.h"
 #include "hitable_list.h"
 #include "sphere.h"
 #include "lambertian.h"
@@ -9,7 +10,7 @@
 #include "dielectric.h"
 #include "utils.h"
 
-inline std::unique_ptr<hitable_list> random_scene() {
+inline std::unique_ptr<hittable> random_scene() {
     std::vector<std::shared_ptr<hittable>> objects;
 
     auto ground_mat = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));
@@ -54,5 +55,5 @@ inline std::unique_ptr<hitable_list> random_scene() {
     auto metal_mat = std::make_shared<metal>(vec3(0.7f, 0.6f, 0.5f), 0.0f);
     objects.push_back(std::make_shared<sphere>(vec3(4.0f, 1.0f, 0.0f), 1.0f, metal_mat));
 
-    return std::make_unique<hitable_list>(objects);
+    return std::make_unique<bvh_node>(objects, 0, objects.size());
 }

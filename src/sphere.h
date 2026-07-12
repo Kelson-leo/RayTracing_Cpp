@@ -38,6 +38,12 @@ public:
         return false;
     }
 
+    bool bounding_box(aabb& box) const override {
+        box = aabb(center - vec3(radius, radius, radius),
+                   center + vec3(radius, radius, radius));
+        return true;
+    }
+
 private:
     vec3 center;
     float radius;

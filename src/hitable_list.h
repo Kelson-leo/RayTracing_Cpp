@@ -35,6 +35,20 @@ public:
         return hit_anything;
     }
 
+    bool bounding_box(aabb& box) const override {
+        if (objects.empty()) return false;
+
+        aabb temp_box;
+        bool first = true;
+
+        for (const auto& obj : objects) {
+            if (!obj->bounding_box(temp_box)) return false;
+            box = first ? temp_box : surrounding_box(box, temp_box);
+            first = false;
+        }
+        return true;
+    }
+
 private:
     std::vector<std::shared_ptr<hittable>> objects;
 };

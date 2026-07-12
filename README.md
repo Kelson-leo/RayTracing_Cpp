@@ -10,6 +10,7 @@ so the git history tells the full story of the build-up.
 ## Features (Stage 1)
 
 - **PPM image output** - raw pixel format, no external dependencies
+- **BVH acceleration** - Bounding Volume Hierarchy for O(log n) ray intersections
 - **Ray-sphere intersection** with surface normals
 - **Antialiasing** via random multisampling
 - **Materials**: Lambertian (diffuse), Metal (reflection + fuzz), Dielectric (refraction + Fresnel)
@@ -33,9 +34,8 @@ cmake --build build
 ./build/ray_tracer_tests
 ```
 
-**Note:** The default resolution (200x100, 100 samples) with ~500 objects takes significant time
-because the renderer uses a naive O(n) ray-object intersection loop. A BVH acceleration structure
-is planned for Stage 2.
+**Note:** The default scene contains ~500 objects. BVH acceleration keeps render times manageable
+even without multithreading (~26s for 200x100 at 100 samples).
 
 ## Requirements
 
@@ -49,9 +49,11 @@ is planned for Stage 2.
 src/
   vec3.h            - 3D vector class with arithmetic operators
   ray.h             - ray (origin + direction)
+  aabb.h            - axis-aligned bounding box with slab intersection
   hittable.h        - abstract hittable interface + hit_record
   sphere.h          - sphere intersection
   hitable_list.h    - object container (vector<shared_ptr>)
+  bvh.h             - BVH acceleration tree
   camera.h          - positionable camera with defocus blur
   material.h        - abstract material interface
   lambertian.h      - diffuse (Lambertian) material
@@ -67,16 +69,6 @@ tests/
   test_sphere.cpp   - sphere intersection tests
   test_hitable_list.cpp - object list tests
 ```
-
-## Roadmap
-
-- [ ] BVH acceleration structure
-- [ ] Multithreading (`std::execution` or OpenMP)
-- [ ] CLI arguments for output file and resolution
-- [ ] Progress indicator via `stderr`
-- [ ] Thread-safe random number generation
-- [ ] Texture mapping and emissive materials
-
 ## Credits
 
 Based on [Ray Tracing in a Weekend](https://raytracing.github.io/) by Peter Shirley.
