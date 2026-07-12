@@ -10,12 +10,6 @@ public:
     hitable_list(std::vector<std::shared_ptr<hittable>> objects)
         : objects(std::move(objects)) {}
 
-    hitable_list(hittable** list, int n) {
-        for (int i = 0; i < n; ++i) {
-            objects.push_back(std::shared_ptr<hittable>(list[i], [](hittable*){}));
-        }
-    }
-
     void add(const std::shared_ptr<hittable>& obj) {
         objects.push_back(obj);
     }

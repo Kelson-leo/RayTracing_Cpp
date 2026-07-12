@@ -6,9 +6,9 @@
 
 TEST(HitableListTest, HitSingleSphere) {
     auto mat = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat);
-    hittable* list[1] = {&s1};
-    hitable_list world(list, 1);
+    auto s1 = std::make_shared<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat);
+    hitable_list world;
+    world.add(s1);
 
     ray r(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     hit_record rec;
@@ -25,12 +25,13 @@ TEST(HitableListTest, HitSingleSphere) {
 }
 
 TEST(HitableListTest, HitMultipleSpheres) {
-    auto mat1 = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f)); 
-    auto mat2 = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f)); 
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat1);
-    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat2);
-    hittable* list[2] = {&s1, &s2};
-    hitable_list world(list, 2);
+    auto mat1 = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f));
+    auto mat2 = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));
+    auto s1 = std::make_shared<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat1);
+    auto s2 = std::make_shared<sphere>(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat2);
+    hitable_list world;
+    world.add(s1);
+    world.add(s2);
 
     ray r(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     hit_record rec;
