@@ -1,10 +1,12 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <random>
 #include "camera.h"
 #include "sphere.h"
 #include "hitable_list.h"
 #include "lambertian.h"
+#include "metal.h"
 #include "utils.h"
 
 vec3 color(const ray& r, const hittable* world, int depth = 0) {
@@ -18,7 +20,7 @@ vec3 color(const ray& r, const hittable* world, int depth = 0) {
         if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
             return attenuation * color(scattered, world, depth + 1);
         }
-        return vec3(0.0f, 0.0f, 0.0f); 
+        return vec3(0.0f, 0.0f, 0.0f);
     } else {
         vec3 unit_direction = unit_vector(r.direction());
         float t = 0.5f * (unit_direction.y() + 1.0f);
@@ -35,16 +37,18 @@ int main() {
 
     std::cout << "P3\n" << nx << ' ' << ny << "\n255\n";
 
-    auto mat_left = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f));   
-    auto mat_right = std::make_shared<lambertian>(vec3(0.8f, 0.8f, 0.0f));   
-    auto mat_ground = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));  
+    auto mat_ground = std::make_shared<lambertian>(vec3(0.8f, 0.8f, 0.0f));   
+    auto mat_center = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f));    
+    auto mat_left   = std::make_shared<metal>(vec3(0.8f, 0.8f, 0.8f), 0.0f);   
+    auto mat_right  = std::make_shared<metal>(vec3(0.8f, 0.6f, 0.2f), 0.3f);   
 
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat_left);
+    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat_center);
     sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat_ground);
     sphere s3(vec3(1.0f, 0.0f, -1.0f), 0.5f, mat_right);
+    sphere s4(vec3(-1.0f, 0.0f, -1.0f), 0.5f, mat_left);
 
-    hittable* list[3] = {&s1, &s2, &s3};
-    hitable_list world(list, 3);
+    hittable* list[4] = {&s1, &s2, &s3, &s4};
+    hitable_list world(list, 4);
 
     camera cam;
 
