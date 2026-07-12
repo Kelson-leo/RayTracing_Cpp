@@ -1,12 +1,12 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-#include <random>
 #include "camera.h"
 #include "sphere.h"
 #include "hitable_list.h"
 #include "lambertian.h"
 #include "metal.h"
+#include "dielectric.h"
 #include "utils.h"
 
 vec3 color(const ray& r, const hittable* world, int depth = 0) {
@@ -38,17 +38,19 @@ int main() {
     std::cout << "P3\n" << nx << ' ' << ny << "\n255\n";
 
     auto mat_ground = std::make_shared<lambertian>(vec3(0.8f, 0.8f, 0.0f));   
-    auto mat_center = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f));    
-    auto mat_left   = std::make_shared<metal>(vec3(0.8f, 0.8f, 0.8f), 0.0f);   
-    auto mat_right  = std::make_shared<metal>(vec3(0.8f, 0.6f, 0.2f), 0.3f);   
+    auto mat_center = std::make_shared<lambertian>(vec3(0.1f, 0.2f, 0.5f));    
+    auto mat_left   = std::make_shared<dielectric>(1.5f);                      
+    auto mat_right  = std::make_shared<metal>(vec3(0.8f, 0.6f, 0.2f), 0.0f);   
 
     sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat_center);
     sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat_ground);
     sphere s3(vec3(1.0f, 0.0f, -1.0f), 0.5f, mat_right);
     sphere s4(vec3(-1.0f, 0.0f, -1.0f), 0.5f, mat_left);
+    
+    sphere s5(vec3(-1.0f, 0.0f, -1.0f), -0.45f, mat_left);
 
-    hittable* list[4] = {&s1, &s2, &s3, &s4};
-    hitable_list world(list, 4);
+    hittable* list[5] = {&s1, &s2, &s3, &s4, &s5};
+    hitable_list world(list, 5);
 
     camera cam;
 
@@ -56,8 +58,8 @@ int main() {
         for (int i = 0; i < nx; ++i) {
             vec3 col(0.0f, 0.0f, 0.0f);
             for (int s = 0; s < ns; ++s) {
-                float u = (float(i) + dis(gen)) / float(nx);
-                float v = (float(j) + dis(gen)) / float(ny);
+                float u = (float(i) + random_float()) / float(nx);
+                float v = (float(j) + random_float()) / float(ny);
                 ray r = cam.get_ray(u, v);
                 col += color(r, &world);
             }
