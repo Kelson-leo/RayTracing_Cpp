@@ -1,19 +1,21 @@
 #include <iostream>
-
-constexpr int IMAGE_WIDTH = 200;
-constexpr int IMAGE_HEIGHT = 100;
+#include "vec3.h"
 
 int main() {
-    std::cout << "P3\n" << IMAGE_WIDTH << ' ' << IMAGE_HEIGHT << "\n255\n";
-    for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
-        for (int i = 0; i < IMAGE_WIDTH; ++i) {
-            float r = static_cast<float>(i) / static_cast<float>(IMAGE_WIDTH);
-            float g = static_cast<float>(j) / static_cast<float>(IMAGE_HEIGHT);
-            float b = 0.2f; 
-            int ir = static_cast<int>(255.99f * r);
-            int ig = static_cast<int>(255.99f * g);
-            int ib = static_cast<int>(255.99f * b);
+    constexpr int nx = 200;
+    constexpr int ny = 100;
 
+    std::cout << "P3\n" << nx << ' ' << ny << "\n255\n";
+
+    for (int j = ny - 1; j >= 0; --j) {
+        for (int i = 0; i < nx; ++i) {
+            // Usando a classe vec3
+            vec3 col(float(i) / float(nx), float(j) / float(ny), 0.2f);
+            
+            int ir = static_cast<int>(255.99f * col[0]);
+            int ig = static_cast<int>(255.99f * col[1]);
+            int ib = static_cast<int>(255.99f * col[2]);
+            
             std::cout << ir << ' ' << ig << ' ' << ib << '\n';
         }
     }
