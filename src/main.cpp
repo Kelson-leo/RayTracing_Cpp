@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cmath>
 #include <memory>
 #include "camera.h"
 #include "sphere.h"
@@ -52,7 +53,11 @@ int main() {
     hittable* list[5] = {&s1, &s2, &s3, &s4, &s5};
     hitable_list world(list, 5);
 
-    camera cam;
+    camera cam(vec3(-2.0f, 2.0f, 1.0f),   
+           vec3(0.0f, 0.0f, -1.0f),    
+           vec3(0.0f, 1.0f, 0.0f),     
+           90.0f,                     
+           float(nx) / float(ny));     
 
     for (int j = ny - 1; j >= 0; --j) {
         for (int i = 0; i < nx; ++i) {
