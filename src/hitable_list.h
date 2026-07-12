@@ -1,18 +1,32 @@
 #pragma once
+#include <vector>
+#include <memory>
 #include "hittable.h"
 
 class hitable_list : public hittable {
 public:
     hitable_list() = default;
-    hitable_list(hittable** l, int n) : list(l), list_size(n) {}
+
+    hitable_list(std::vector<std::shared_ptr<hittable>> objects)
+        : objects(std::move(objects)) {}
+
+    hitable_list(hittable** list, int n) {
+        for (int i = 0; i < n; ++i) {
+            objects.push_back(std::shared_ptr<hittable>(list[i], [](hittable*){}));
+        }
+    }
+
+    void add(const std::shared_ptr<hittable>& obj) {
+        objects.push_back(obj);
+    }
 
     bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override {
         hit_record temp_rec;
         bool hit_anything = false;
         float closest_so_far = t_max;
 
-        for (int i = 0; i < list_size; ++i) {
-            if (list[i]->hit(r, t_min, closest_so_far, temp_rec)) {
+        for (const auto& obj : objects) {
+            if (obj->hit(r, t_min, closest_so_far, temp_rec)) {
                 hit_anything = true;
                 closest_so_far = temp_rec.t;
                 rec = temp_rec;
@@ -22,6 +36,5 @@ public:
     }
 
 private:
-    hittable** list;
-    int list_size;
+    std::vector<std::shared_ptr<hittable>> objects;
 };

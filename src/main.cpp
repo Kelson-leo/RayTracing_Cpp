@@ -9,6 +9,7 @@
 #include "metal.h"
 #include "dielectric.h"
 #include "utils.h"
+#include "scene.h"
 
 vec3 color(const ray& r, const hittable* world, int depth = 0) {
     const int max_depth = 50;
@@ -32,37 +33,24 @@ vec3 color(const ray& r, const hittable* world, int depth = 0) {
 }
 
 int main() {
-    constexpr int nx = 200;
+    constexpr int nx = 200;     
     constexpr int ny = 100;
-    constexpr int ns = 100;
+    constexpr int ns = 100;     
 
     std::cout << "P3\n" << nx << ' ' << ny << "\n255\n";
 
-    auto mat_ground = std::make_shared<lambertian>(vec3(0.8f, 0.8f, 0.0f));   
-    auto mat_center = std::make_shared<lambertian>(vec3(0.1f, 0.2f, 0.5f));    
-    auto mat_left   = std::make_shared<dielectric>(1.5f);                      
-    auto mat_right  = std::make_shared<metal>(vec3(0.8f, 0.6f, 0.2f), 0.0f);   
+    auto world = random_scene();
 
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat_center);
-    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat_ground);
-    sphere s3(vec3(1.0f, 0.0f, -1.0f), 0.5f, mat_right);
-    sphere s4(vec3(-1.0f, 0.0f, -1.0f), 0.5f, mat_left);
-    
-    sphere s5(vec3(-1.0f, 0.0f, -1.0f), -0.45f, mat_left);
-
-    hittable* list[5] = {&s1, &s2, &s3, &s4, &s5};
-    hitable_list world(list, 5);
-
-    vec3 lookfrom(3.0f, 3.0f, 2.0f);
-    vec3 lookat(0.0f, 0.0f, -1.0f);
+    vec3 lookfrom(13.0f, 2.0f, 3.0f);
+    vec3 lookat(0.0f, 0.0f, 0.0f);
     float dist_to_focus = (lookfrom - lookat).length();
-    float aperture = 2.0f;  
+    float aperture = 0.1f;   
 
     camera cam(lookfrom, lookat, vec3(0.0f, 1.0f, 0.0f),
-           20.0f,                    
-           float(nx) / float(ny),
-           aperture,
-           dist_to_focus);   
+               20.0f,                     // vfov
+               float(nx) / float(ny),
+               aperture,
+               dist_to_focus);
 
     for (int j = ny - 1; j >= 0; --j) {
         for (int i = 0; i < nx; ++i) {
@@ -71,7 +59,7 @@ int main() {
                 float u = (float(i) + random_float()) / float(nx);
                 float v = (float(j) + random_float()) / float(ny);
                 ray r = cam.get_ray(u, v);
-                col += color(r, &world);
+                col += color(r, world.get());
             }
             col /= float(ns);
 

@@ -1,5 +1,26 @@
+# Build artifacts
 build/
+*.o
+
+# Binaries
+raytracer
+ray_tracer_tests
+
+# Generated images
 output/*.ppm
 output/*.png
-raytracer
-*.o
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.bak
+*.swp
+*~
+
+# Copyrighted material
+*.pdf
+
+# Local working documents (not for public repo)
+docs/

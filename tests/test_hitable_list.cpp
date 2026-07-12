@@ -1,9 +1,12 @@
 #include <gtest/gtest.h>
+#include <memory>
 #include "../src/hitable_list.h"
 #include "../src/sphere.h"
+#include "../src/lambertian.h"
 
 TEST(HitableListTest, HitSingleSphere) {
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f);
+    auto mat = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));
+    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat);
     hittable* list[1] = {&s1};
     hitable_list world(list, 1);
 
@@ -22,8 +25,10 @@ TEST(HitableListTest, HitSingleSphere) {
 }
 
 TEST(HitableListTest, HitMultipleSpheres) {
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f);
-    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f);
+    auto mat1 = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f)); 
+    auto mat2 = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f)); 
+    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat1);
+    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat2);
     hittable* list[2] = {&s1, &s2};
     hitable_list world(list, 2);
 
