@@ -1,14 +1,21 @@
 #include <iostream>
 #include "ray.h"
+#include "sphere.h"
 
 inline constexpr vec3 lerp(const vec3& a, const vec3& b, float t) {
     return (1.0f - t) * a + t * b;
 }
 
 vec3 color(const ray& r) {
+    sphere s(vec3(0.0f, 0.0f, -1.0f), 0.5f);
+    
+    float t_hit = 0.0f;
+    if (s.hit(r, 0.0f, 1000.0f, t_hit)) {
+        return vec3(1.0f, 0.0f, 0.0f); 
+    }
+
     vec3 unit_direction = unit_vector(r.direction());
     float t = 0.5f * (unit_direction.y() + 1.0f);
-    
     vec3 white(1.0f, 1.0f, 1.0f);
     vec3 blue(0.5f, 0.7f, 1.0f);
     return lerp(white, blue, t);

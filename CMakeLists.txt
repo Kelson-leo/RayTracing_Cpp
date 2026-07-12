@@ -21,6 +21,7 @@ add_executable(ray_tracer_tests
     tests/test_main.cpp
     tests/test_vec3.cpp
     tests/test_ray.cpp
+    tests/test_sphere.cpp
 )
 target_link_libraries(ray_tracer_tests
     gtest_main
@@ -30,3 +31,4 @@ target_compile_options(ray_tracer_tests PRIVATE -Wall -Wextra -Wpedantic)
 
 enable_testing()
 add_test(NAME UnitTests COMMAND ray_tracer_tests)
+
