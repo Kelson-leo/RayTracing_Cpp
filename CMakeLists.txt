@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.14)  # FetchContent requer 3.14+
+project(RayTracer)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# --- Executável Principal ---
+add_executable(raytracer src/main.cpp)
+target_compile_options(raytracer PRIVATE -Wall -Wextra -Wpedantic)
+
+# --- Google Test via FetchContent (baixa automaticamente) ---
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+# --- Executável de Testes ---
+add_executable(ray_tracer_tests
+    tests/test_main.cpp
+    tests/test_vec3.cpp
+    tests/test_ray.cpp
+)
+target_link_libraries(ray_tracer_tests
+    gtest_main
+    pthread
+)
+target_compile_options(ray_tracer_tests PRIVATE -Wall -Wextra -Wpedantic)
+
+enable_testing()
+add_test(NAME UnitTests COMMAND ray_tracer_tests)
