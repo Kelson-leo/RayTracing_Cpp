@@ -1,20 +1,24 @@
 #include <iostream>
 #include <limits>
-#include <random>
+#include <memory>
 #include "camera.h"
 #include "sphere.h"
 #include "hitable_list.h"
+#include "lambertian.h"
+#include "utils.h"
 
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+vec3 color(const ray& r, const hittable* world, int depth = 0) {
+    const int max_depth = 50;
+    if (depth >= max_depth) return vec3(0.0f, 0.0f, 0.0f);
 
-vec3 color(const ray& r, const hittable* world) {
     hit_record rec;
-    if (world->hit(r, 0.0f, std::numeric_limits<float>::max(), rec)) {
-        return 0.5f * vec3(rec.normal.x() + 1.0f,
-                           rec.normal.y() + 1.0f,
-                           rec.normal.z() + 1.0f);
+    if (world->hit(r, 0.001f, std::numeric_limits<float>::max(), rec)) {
+        vec3 attenuation;
+        ray scattered;
+        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
+            return attenuation * color(scattered, world, depth + 1);
+        }
+        return vec3(0.0f, 0.0f, 0.0f); 
     } else {
         vec3 unit_direction = unit_vector(r.direction());
         float t = 0.5f * (unit_direction.y() + 1.0f);
@@ -27,14 +31,20 @@ vec3 color(const ray& r, const hittable* world) {
 int main() {
     constexpr int nx = 200;
     constexpr int ny = 100;
-    constexpr int ns = 100; 
+    constexpr int ns = 100;
 
     std::cout << "P3\n" << nx << ' ' << ny << "\n255\n";
 
-    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f);
-    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f);
-    hittable* list[2] = {&s1, &s2};
-    hitable_list world(list, 2);
+    auto mat_left = std::make_shared<lambertian>(vec3(0.8f, 0.3f, 0.3f));   
+    auto mat_right = std::make_shared<lambertian>(vec3(0.8f, 0.8f, 0.0f));   
+    auto mat_ground = std::make_shared<lambertian>(vec3(0.5f, 0.5f, 0.5f));  
+
+    sphere s1(vec3(0.0f, 0.0f, -1.0f), 0.5f, mat_left);
+    sphere s2(vec3(0.0f, -100.5f, -1.0f), 100.0f, mat_ground);
+    sphere s3(vec3(1.0f, 0.0f, -1.0f), 0.5f, mat_right);
+
+    hittable* list[3] = {&s1, &s2, &s3};
+    hitable_list world(list, 3);
 
     camera cam;
 
@@ -48,6 +58,8 @@ int main() {
                 col += color(r, &world);
             }
             col /= float(ns);
+
+            col = vec3(std::sqrt(col[0]), std::sqrt(col[1]), std::sqrt(col[2]));
 
             int ir = static_cast<int>(255.99f * col[0]);
             int ig = static_cast<int>(255.99f * col[1]);
