@@ -22,6 +22,7 @@ add_executable(ray_tracer_tests
     tests/test_vec3.cpp
     tests/test_ray.cpp
     tests/test_sphere.cpp
+    tests/test_hitable_list.cpp
 )
 target_link_libraries(ray_tracer_tests
     gtest_main
