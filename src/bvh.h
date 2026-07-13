@@ -9,8 +9,8 @@
 class bvh_node : public hittable {
 public:
     bvh_node(std::vector<std::shared_ptr<hittable>>& objects,
-             size_t start, size_t end) {
-        int axis = static_cast<int>(3.0f * random_float());
+             size_t start, size_t end, rng& r) {
+        int axis = static_cast<int>(3.0f * random_float(r));
         if (axis > 2) axis = 2;
 
         auto comparator = [axis](const std::shared_ptr<hittable>& a,
@@ -35,8 +35,8 @@ public:
         } else {
             std::sort(objects.begin() + start, objects.begin() + end, comparator);
             size_t mid = start + span / 2;
-            left = std::make_shared<bvh_node>(objects, start, mid);
-            right = std::make_shared<bvh_node>(objects, mid, end);
+            left = std::make_shared<bvh_node>(objects, start, mid, r);
+            right = std::make_shared<bvh_node>(objects, mid, end, r);
         }
 
         aabb box_left, box_right;

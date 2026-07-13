@@ -2,6 +2,8 @@
 
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
 [![CMake](https://img.shields.io/badge/CMake-3.14+-brightgreen.svg)](https://cmake.org/)
+[![OpenMP](https://img.shields.io/badge/OpenMP-4.5-blue.svg)](https://www.openmp.org/)
+[![Tests](https://img.shields.io/badge/tests-16%2F16-green.svg)]()
 
 A modern C++17 implementation of Peter Shirley's classic *"Ray Tracing in a Weekend"*.
 Each chapter was implemented incrementally, with every feature committed as a standalone step
@@ -11,8 +13,9 @@ so the git history tells the full story of the build-up.
 
 - **PPM image output** - raw pixel format, no external dependencies
 - **BVH acceleration** - Bounding Volume Hierarchy for O(log n) ray intersections
+- **Multithreading** - OpenMP parallel rendering with per-thread RNG
 - **Ray-sphere intersection** with surface normals
-- **Antialiasing** via random multisampling
+- **Antialiasing** via random multisampling (up to 100 samples/pixel)
 - **Materials**: Lambertian (diffuse), Metal (reflection + fuzz), Dielectric (refraction + Fresnel)
 - **Positionable camera** with adjustable FOV and orientation
 - **Defocus blur** (depth of field) with aperture and focus distance
@@ -30,12 +33,19 @@ cmake --build build
 # Render (writes PPM to stdout)
 ./build/raytracer > output/image.ppm
 
+# View (PPM viewers)
+feh output/image.ppm           # Linux (feh)
+display output/image.ppm       # Linux (ImageMagick)
+
 # Run tests
 ./build/ray_tracer_tests
 ```
 
-**Note:** The default scene contains ~500 objects. BVH acceleration keeps render times manageable
-even without multithreading (~26s for 200x100 at 100 samples).
+The output is raw PPM (ASCII). Most image viewers support it (`feh`, `display`, GIMP, Photoshop).
+Browsers do not — convert to PNG if needed: `convert output/image.ppm output/image.png`
+
+The default scene contains ~500 objects. BVH + OpenMP keeps render times manageable
+(~4.3s for 200x100 at 100 samples on 12 cores).
 
 ## Requirements
 

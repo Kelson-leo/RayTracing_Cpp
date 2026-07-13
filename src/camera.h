@@ -18,15 +18,15 @@ public:
         u = unit_vector(cross(vup, w));
         v = cross(w, u);
 
-        lower_left_corner = origin - half_width * focus_dist * u 
-                                   - half_height * focus_dist * v 
+        lower_left_corner = origin - half_width * focus_dist * u
+                                   - half_height * focus_dist * v
                                    - focus_dist * w;
         horizontal = 2.0f * half_width * focus_dist * u;
         vertical = 2.0f * half_height * focus_dist * v;
     }
 
-    ray get_ray(float s, float t) const {
-        vec3 rd = lens_radius * random_in_unit_disk();
+    ray get_ray(float s, float t, rng& r) const {
+        vec3 rd = lens_radius * random_in_unit_disk(r);
         vec3 offset = u * rd.x() + v * rd.y();
 
         return ray(origin + offset,
