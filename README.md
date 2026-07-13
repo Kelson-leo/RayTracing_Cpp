@@ -4,10 +4,16 @@
 [![CMake](https://img.shields.io/badge/CMake-3.14+-brightgreen.svg)](https://cmake.org/)
 [![OpenMP](https://img.shields.io/badge/OpenMP-4.5-blue.svg)](https://www.openmp.org/)
 [![Tests](https://img.shields.io/badge/tests-16%2F16-green.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)]()
 
-A modern C++17 implementation of Peter Shirley's classic *"Ray Tracing in a Weekend"*.
-Each chapter was implemented incrementally, with every feature committed as a standalone step
-so the git history tells the full story of the build-up.
+A physically-based ray tracer that renders 3D scenes to image files. Built from scratch
+following Peter Shirley's *"Ray Tracing in a Weekend"*. Each chapter committed as a
+standalone step — the git history walks through the entire build-up from empty file to
+final render.
+
+**What it does:** Takes a 3D scene (spheres with materials, lights, camera), simulates
+light rays bouncing through it (path tracing), and outputs a PPM image. The default scene
+is a procedural world of ~500 random spheres with diffuse, metallic, and glass materials.
 
 ## Features (Stage 1)
 
